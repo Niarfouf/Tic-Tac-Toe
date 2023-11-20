@@ -5,3 +5,29 @@ html {
   *, *:before, *:after {
     box-sizing: inherit;
   }
+body {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  margin-top: 50px;
+  display: grid;
+  
+  justify-items: center;
+  align-content: start;
+  gap: 50px;
+  
+}
+  .board {
+    width: 350px;
+    height: 350px;
+    border: 1px solid black;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    
+  }
+
+  .cell {
+    font-size: 40px;
+    font-weight: bold;
+  }
