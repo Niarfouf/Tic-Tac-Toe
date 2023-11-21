@@ -3,12 +3,50 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Dashboard</title>
+    <title>Tic-Tac-Toe</title>
     <link rel="stylesheet" href="styles.css" />
     <script src="./script.js" defer></script>
   </head>
   <body>
-    <div class="board"></div>
+    <div class="form">
+      <form name="players-name" action="" id="players-name">
+        <div class="players">
+          <div class="label-input">
+            <label for="player1">Player 1:</label>
+            <input
+              type="text"
+              name="player1"
+              id="player-1"
+              placeholder="Bob..."
+            />
+          </div>
+          <p>VS</p>
+          <div class="label-input">
+            <label for="player-2">Player 2:</label>
+            <input
+              type="text"
+              name="player2"
+              id="player-2"
+              placeholder="Alice..."
+            />
+          </div>
+        </div>
+
+        <button type="submit">Start game</button>
+      </form>
+    </div>
+    <div class="main-content">
+      <div class="player-one">
+        <p>Player one :</p>
+        X
+      </div>
+      <div class="board"></div>
+      <div class="player-two">
+        <p>Player two :</p>
+        O
+      </div>
+    </div>
     <div class="turn"></div>
+    <div class="restart"></div>
   </body>
 </html>

@@ -17,11 +17,8 @@ function Gameboard() {
         board[row][column].addPlayerSign(player)
         return true
     }
-    const printBoard = () => {
-        const boardWithMarkedCell = board.map((row) => row.map((cell) => cell.getValue()))
-        console.log(boardWithMarkedCell)
-    }
-    return {getBoard, markCell, printBoard}
+    
+    return {getBoard, markCell}
 }
 
 function Cell() {
@@ -37,6 +34,7 @@ function Cell() {
 
 function GameController(playerOne = "Player One", playerTwo = "Player Two") {
     const board = Gameboard()
+    let count = 0
     const players = [{name: playerOne, sign: "x"}, {name: playerTwo, sign: "o"}]
     let currentPlayer = players[0]
     const switchPlayer = () => {
@@ -57,7 +55,7 @@ function GameController(playerOne = "Player One", playerTwo = "Player Two") {
                 }
             }
             if (score === 3) {
-                console.log(`${getCurrentPlayer().name} has won!`)
+                
                 return true
             }
         }
@@ -70,56 +68,83 @@ function GameController(playerOne = "Player One", playerTwo = "Player Two") {
                 }
             }
             if (score === 3) {
-                console.log(`${getCurrentPlayer().name} has won!`)
+                
                 return true
             }
         }
 //checking if diag win
         if (getCurrentPlayer().sign === actualBoard[0][0].getValue() && getCurrentPlayer().sign === actualBoard[1][1].getValue() && getCurrentPlayer().sign === actualBoard[2][2].getValue()) {
-            console.log(`${getCurrentPlayer().name} has won!`)
+            
             return true
         }
         if (getCurrentPlayer().sign === actualBoard[2][0].getValue() && getCurrentPlayer().sign === actualBoard[1][1].getValue() && getCurrentPlayer().sign === actualBoard[0][2].getValue()) {
-            console.log(`${getCurrentPlayer().name} has won!`)
+            
             return true
         }
     }
     const getCurrentPlayer = () => currentPlayer
-    const printNewRound = () => {
-        board.printBoard();
-        console.log(`${getCurrentPlayer().name}'s turn.`);
-      };
+    
     const playRound = (row, column) => {
-        let count = 0
-        console.log(
-            `Marking ${getCurrentPlayer().name}'s sign into row/column ${row}/${column}...`
-        );
+        
         if(!board.markCell(row, column, getCurrentPlayer().sign)) {
-            console.log("invalid move")
-            printNewRound();
-            return
+            
+            return false
         };
         count++;
         
         if(checkWinner()) {
-            return;}
+            const playerTurnDiv = document.querySelector('#turn');
+            playerTurnDiv.textContent = `${currentPlayer.name} has won!`
+            return false;
+        }
         if (count === 9) {
-            console.log(`It's a tie...`);
-            return
+            const playerTurnDiv = document.querySelector('#turn');
+            playerTurnDiv.textContent = `It's a tie nobody won!`
+            return false
         }
         switchPlayer();
-        printNewRound();
+        return true
+        
         
     };
-    printNewRound();
+    
     return {playRound, getCurrentPlayer, getBoard: board.getBoard};
 }
 
 function ScreenController() {
-    const game = GameController();
+    let game = GameController();
+    let result = true
     const playerTurnDiv = document.querySelector('.turn');
+    const nameForm = document.querySelector("#players-name")
+    const playerOneDiv = document.querySelector('.player-one');
+    const playerTwoDiv = document.querySelector('.player-two');
     const boardDiv = document.querySelector('.board');
-  
+    const formDiv = document.querySelector(".form")
+    const restartDiv = document.querySelector(".restart")
+    
+    nameForm.addEventListener("submit", (e) => {
+        e.preventDefault()
+        playerTurnDiv.style.visibility = "visible";
+        const playerOneName = e.target.player1.value ? e.target.player1.value : "Player One"
+        const playerTwoName = e.target.player2.value ? e.target.player2.value : "Player Two"
+        game = GameController(playerOneName, playerTwoName);
+        updateScreen();
+
+        boardDiv.addEventListener("click", clickHandlerBoard);
+        
+        formDiv.textContent = `${playerOneName} VS ${playerTwoName}`
+        const restartGame = document.createElement("button")
+        restartGame.textContent = "Restart"
+
+        restartGame.addEventListener("click", () => {
+            game = GameController(playerOneName, playerTwoName);
+            result = true
+            updateScreen();
+        })
+        restartDiv.appendChild(restartGame)
+        playerOneDiv.textContent = playerOneName + " : X"
+        playerTwoDiv.textContent = playerTwoName + " : O"
+    })
     const updateScreen = () => {
       // clear the board
       boardDiv.textContent = "";
@@ -129,7 +154,11 @@ function ScreenController() {
       const currentPlayer = game.getCurrentPlayer();
   
       // Display player's turn
-      playerTurnDiv.textContent = `${currentPlayer.name}'s turn...`
+      const playerTurnDiv = document.querySelector('.turn');
+      if (playerTurnDiv && result) {
+        playerTurnDiv.textContent = `${currentPlayer.name}'s turn...`
+      }
+      
   
       // Render board squares
       board.forEach((row, rowIndex) => {
@@ -154,11 +183,14 @@ function ScreenController() {
 
       // Make sure I've clicked a column and not the gaps in between
       if (!selectedColumn || !selectedRow) return;
+      if (result) {
+        result = game.playRound(selectedRow, selectedColumn)
+        updateScreen();
+      }
       
-      game.playRound(selectedRow, selectedColumn);
-      updateScreen();
     }
-    boardDiv.addEventListener("click", clickHandlerBoard);
+    
+    
   
     // Initial render
     updateScreen();

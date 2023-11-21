@@ -31,3 +31,42 @@ body {
     font-size: 40px;
     font-weight: bold;
   }
+
+  .main-content {
+    display: grid;
+    grid-auto-flow: column;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .players {
+    display: grid;
+    grid-auto-flow: column;
+    gap: 20px;
+    align-items: center;
+    
+  }
+
+  .form {
+    height: 80px;
+    display: flex;
+    align-items: center;
+  }
+
+  #players-name {
+    display:grid;
+    justify-items: center;
+    gap: 20px;
+  }
+
+  .label-input {
+    display: grid;
+  }
+
+  .player-one, .player-two {
+    text-align: center;
+  }
+
+  .turn {
+    visibility: hidden;
+  }
