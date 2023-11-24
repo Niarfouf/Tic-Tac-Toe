@@ -1,19 +1,19 @@
 function Gameboard() {
-    const rows = 3;
-    const columns = 3;
-    const board = [];
+    const rows = 3
+    const columns = 3
+    const board = []
 
     for (let i = 0; i < rows; i++) {
-        board[i] = [];
+        board[i] = []
         for (let j = 0; j < columns; j++) {
-            board[i].push(Cell());
+            board[i].push(Cell())
         }
     }
 
     const getBoard = () => board;
     const markCell = (row, column, player) => {
         const targetedCell = board[row][column].getValue()
-        if (targetedCell) return false;
+        if (targetedCell) return false
         board[row][column].addPlayerSign(player)
         return true
     }
@@ -22,12 +22,11 @@ function Gameboard() {
 }
 
 function Cell() {
-    let value = "";
-
+    let value = ""
     const addPlayerSign = (player) => {
-        value = player;
+        value = player
     }
-    const getValue = () => value;
+    const getValue = () => value
 
     return {addPlayerSign, getValue}
 }
@@ -44,158 +43,137 @@ function GameController(playerOne = "Player One", playerTwo = "Player Two") {
             currentPlayer = players[0]
         }
     }
+
     const checkWinner = () => {
+
  //checking if row win
     let actualBoard = board.getBoard()
         for (let i = 0; i < 3; i++) {
-            let score = 0;
+            let score = 0
             for (let j = 0; j < 3; j++) {
                 if (actualBoard[i][j].getValue() === getCurrentPlayer().sign) {
                     score++
                 }
             }
             if (score === 3) {
-                
                 return true
             }
         }
+
 //checking if column win
         for (let j = 0; j < 3; j++) {
-            let score = 0;
+            let score = 0
             for (let i = 0; i < 3; i++) {
                 if (actualBoard[i][j].getValue() === getCurrentPlayer().sign) {
                     score++
                 }
             }
             if (score === 3) {
-                
                 return true
             }
         }
+
 //checking if diag win
-        if (getCurrentPlayer().sign === actualBoard[0][0].getValue() && getCurrentPlayer().sign === actualBoard[1][1].getValue() && getCurrentPlayer().sign === actualBoard[2][2].getValue()) {
-            
+        if (getCurrentPlayer().sign === actualBoard[0][0].getValue() && getCurrentPlayer().sign === actualBoard[1][1].getValue() && getCurrentPlayer().sign === actualBoard[2][2].getValue()) {  
             return true
         }
         if (getCurrentPlayer().sign === actualBoard[2][0].getValue() && getCurrentPlayer().sign === actualBoard[1][1].getValue() && getCurrentPlayer().sign === actualBoard[0][2].getValue()) {
-            
             return true
         }
     }
+
     const getCurrentPlayer = () => currentPlayer
     
     const playRound = (row, column) => {
         
         if(!board.markCell(row, column, getCurrentPlayer().sign)) {
-            
             return true
-        };
-        count++;
-        
+        }
+
+        count++
         if(checkWinner()) {
-            const playerTurnDiv = document.querySelector('.turn');
+            const playerTurnDiv = document.querySelector('.turn')
             playerTurnDiv.textContent = `${currentPlayer.name} has won!`
-            return false;
+            return false
         }
         if (count === 9) {
-            const playerTurnDiv = document.querySelector('.turn');
+            const playerTurnDiv = document.querySelector('.turn')
             playerTurnDiv.textContent = `It's a tie nobody won!`
             return false
         }
-        switchPlayer();
+        switchPlayer()
         return true
-        
-        
-    };
+    }
     
     return {playRound, getCurrentPlayer, getBoard: board.getBoard};
 }
 
 function ScreenController() {
-    let game = GameController();
+    let game = GameController()
     let result = true
-    const playerTurnDiv = document.querySelector('.turn');
+    const playerTurnDiv = document.querySelector('.turn')
     const nameForm = document.querySelector("#players-name")
-    const playerOneDiv = document.querySelector('.player-one');
-    const playerTwoDiv = document.querySelector('.player-two');
-    const boardDiv = document.querySelector('.board');
+    const playerOneDiv = document.querySelector('.player-one')
+    const playerTwoDiv = document.querySelector('.player-two')
+    const boardDiv = document.querySelector('.board')
     const formDiv = document.querySelector(".form")
     const restartDiv = document.querySelector(".restart")
     
     nameForm.addEventListener("submit", (e) => {
         e.preventDefault()
-        playerTurnDiv.style.visibility = "visible";
+        playerTurnDiv.style.visibility = "visible"
         const playerOneName = e.target.player1.value ? e.target.player1.value : "Player One"
         const playerTwoName = e.target.player2.value ? e.target.player2.value : "Player Two"
-        game = GameController(playerOneName, playerTwoName);
-        updateScreen();
-
-        boardDiv.addEventListener("click", clickHandlerBoard);
-        
+        game = GameController(playerOneName, playerTwoName)
+        boardDiv.addEventListener("click", clickHandlerBoard)
         formDiv.textContent = `${playerOneName} VS ${playerTwoName}`
         const restartGame = document.createElement("button")
         restartGame.textContent = "Restart"
-
         restartGame.addEventListener("click", () => {
             game = GameController(playerOneName, playerTwoName);
             result = true
-            updateScreen();
+            updateScreen()
         })
         restartDiv.appendChild(restartGame)
         playerOneDiv.textContent = playerOneName + " : X"
         playerTwoDiv.textContent = playerTwoName + " : O"
+        updateScreen()
     })
+
     const updateScreen = () => {
-      // clear the board
-      boardDiv.textContent = "";
-  
-      // get the newest version of the board and player turn
-      const board = game.getBoard();
-      const currentPlayer = game.getCurrentPlayer();
-  
-      // Display player's turn
-      const playerTurnDiv = document.querySelector('.turn');
+      boardDiv.textContent = ""
+      const board = game.getBoard()
+      const currentPlayer = game.getCurrentPlayer()
+      const playerTurnDiv = document.querySelector('.turn')
       if (playerTurnDiv && result) {
         playerTurnDiv.textContent = `${currentPlayer.name}'s turn...`
       }
       
-  
-      // Render board squares
+      // Render board
       board.forEach((row, rowIndex) => {
         row.forEach((cell, columnIndex) => {
-          // Anything clickable should be a button!!
-          const cellButton = document.createElement("button");
-          cellButton.classList.add("cell");
-          // Create a data attribute to identify the column
-          // This makes it easier to pass into our `playRound` function 
+          const cellButton = document.createElement("button")
+          cellButton.classList.add("cell")
+          // Create a data attribute to identify the cell
           cellButton.dataset.row = rowIndex
           cellButton.dataset.column = columnIndex
-          cellButton.textContent = cell.getValue();
-          boardDiv.appendChild(cellButton);
+          cellButton.textContent = cell.getValue()
+          boardDiv.appendChild(cellButton)
         })
       })
     }
   
     // Add event listener for the board
     function clickHandlerBoard(e) {
-      const selectedColumn = e.target.dataset.column;
-      const selectedRow = e.target.dataset.row;
-
-      // Make sure I've clicked a column and not the gaps in between
-      if (!selectedColumn || !selectedRow) return;
+      const selectedColumn = e.target.dataset.column
+      const selectedRow = e.target.dataset.row
       if (result) {
         result = game.playRound(selectedRow, selectedColumn)
-        updateScreen();
+        updateScreen()
       }
       
     }
-    
-    
-  
-    // Initial render
-    updateScreen();
-  
-    // We don't need to return anything from this module because everything is encapsulated inside this screen controller.
+    updateScreen()
   }
   
-  ScreenController();
+  ScreenController()
