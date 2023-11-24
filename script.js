@@ -88,17 +88,17 @@ function GameController(playerOne = "Player One", playerTwo = "Player Two") {
         
         if(!board.markCell(row, column, getCurrentPlayer().sign)) {
             
-            return false
+            return true
         };
         count++;
         
         if(checkWinner()) {
-            const playerTurnDiv = document.querySelector('#turn');
+            const playerTurnDiv = document.querySelector('.turn');
             playerTurnDiv.textContent = `${currentPlayer.name} has won!`
             return false;
         }
         if (count === 9) {
-            const playerTurnDiv = document.querySelector('#turn');
+            const playerTurnDiv = document.querySelector('.turn');
             playerTurnDiv.textContent = `It's a tie nobody won!`
             return false
         }
